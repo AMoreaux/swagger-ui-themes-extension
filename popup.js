@@ -1,15 +1,21 @@
 function changeTheme(theme, version) {
   let script;
   console.log('>>>>>>>>>>>', theme);
-  if (theme === 'none') {
-    script = `var elm = document.getElementById('theme-swagger-by-extension'); if(elm)elm.parentNode.removeChild(elm);`;
-  } else {
+  script = `var elms = document.querySelectorAll("[data-theme='theme-swagger-by-extension']"); for(var i = 0; i < elms.length; i++){if(elms[i])elms[i].parentNode.removeChild(elms[i]);}`;
+
+  chrome.tabs.executeScript({
+    code: script
+  });
+
+  if (theme !== 'none') {
     const url = chrome.extension.getURL(`themes/${version}/theme-${theme}.css`)
-    script = `var link = document.createElement("link"); link.href = "${url}"; link.type = "text/css"; link.rel = "stylesheet"; link.id = "theme-swagger-by-extension"; document.getElementsByTagName("head")[0].appendChild(link);`;
+    script = `var link = document.createElement("link"); link.href = "${url}"; link.type = "text/css"; link.rel = "stylesheet"; link.setAttribute("data-theme", "theme-swagger-by-extension"); document.getElementsByTagName("head")[0].appendChild(link);`;
+
   }
   chrome.tabs.executeScript({
     code: script
   });
+
 }
 
 function getSavedTheme(callback) {
